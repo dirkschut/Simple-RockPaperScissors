@@ -15,6 +15,7 @@ namespace RockPaperScissors
         {
             Console.WriteLine("Welcome to Rock Paper Scissors by Dirk Schut!");
             game = new Game();
+            game.LoadSave();
             game.Start();
             Console.WriteLine("Thanks for playing!");
             Console.ReadLine();

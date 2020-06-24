@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace RockPaperScissors
 {
@@ -14,12 +17,13 @@ namespace RockPaperScissors
     /// <summary>
     /// Contains the actual game
     /// </summary>
-    class Game
+    public class Game
     {
         private int enemyScore = -1;
         private int playerScore = -1;
 
         private Dictionary<int, string> optionNames;
+
         private Random random;
 
         public int EnemyScore
@@ -60,7 +64,6 @@ namespace RockPaperScissors
             optionNames.Add((int)Options.PAPER, "Paper");
             optionNames.Add((int)Options.SCISSORS, "Scissors");
             random = new Random();
-            //TODO: Load saved score
         }
 
         /// <summary>
@@ -110,6 +113,7 @@ namespace RockPaperScissors
                 PlayerScore++;
             }
             DisplayScore();
+            saveGame();
         }
 
         /// <summary>
@@ -160,6 +164,75 @@ namespace RockPaperScissors
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// A very simple file reader.
+        /// </summary>
+        public void LoadSave()
+        {
+            if (!File.Exists("rps.xml"))
+            {
+                Console.WriteLine("No save file found.");
+                return;
+            }
+
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.IgnoreWhitespace = true;
+            FileStream fileStream = new FileStream("rps.xml", FileMode.Open);
+            XmlReader xmlReader = XmlReader.Create(fileStream, settings);
+
+            bool isPlayer = false;
+            bool isEnemy = false;
+
+            while (xmlReader.Read())
+            {
+
+                switch (xmlReader.NodeType)
+                {
+                    case XmlNodeType.Element:
+                        if (xmlReader.Name == "playerscore")
+                            isPlayer = true;
+                        else if (xmlReader.Name == "enemyscore")
+                            isEnemy = true;
+                        break;
+                    case XmlNodeType.Text:
+                        if (isPlayer)
+                        {
+                            int.TryParse(xmlReader.Value, out playerScore);
+                            isPlayer = false;
+                        }
+                        else if (isEnemy)
+                        {
+                            int.TryParse(xmlReader.Value, out enemyScore);
+                            isEnemy = false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            xmlReader.Close();
+            fileStream.Close();
+        }
+
+        /// <summary>
+        /// Saves the score in a simple XML document.
+        /// </summary>
+        private void saveGame()
+        {
+            FileStream fileStream = new FileStream("rps.xml", FileMode.Create);
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+            XmlWriter xmlWriter = XmlWriter.Create(fileStream, xmlWriterSettings);
+
+            xmlWriter.WriteStartElement("score");
+            xmlWriter.WriteElementString("playerscore", PlayerScore.ToString());
+            xmlWriter.WriteElementString("enemyscore", EnemyScore.ToString());
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.Flush();
+            xmlWriter.Close();
+            fileStream.Close();
         }
     }
 }
