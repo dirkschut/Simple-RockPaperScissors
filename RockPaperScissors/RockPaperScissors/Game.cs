@@ -100,16 +100,22 @@ namespace RockPaperScissors
 
             if(playerChoice == robotChoice + 1 || playerChoice == robotChoice - 2)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("The Robot won.");
+                Console.ForegroundColor = ConsoleColor.White;
                 EnemyScore++;
             }
             else if(playerChoice == robotChoice)
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("It was a draw.");
+                Console.ForegroundColor = ConsoleColor.White;
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("You won!");
+                Console.ForegroundColor = ConsoleColor.White;
                 PlayerScore++;
             }
             DisplayScore();
