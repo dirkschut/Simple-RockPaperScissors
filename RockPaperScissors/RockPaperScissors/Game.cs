@@ -22,6 +22,8 @@ namespace RockPaperScissors
         private int enemyScore = -1;
         private int playerScore = -1;
 
+        private bool autoturn = false;
+
         private Dictionary<int, string> optionNames;
 
         private Random random;
@@ -77,7 +79,8 @@ namespace RockPaperScissors
             while (anotherTurn)
             {
                 DoTurn();
-                anotherTurn = AskAgain();
+                if(!autoturn)
+                    anotherTurn = AskAgain();
             }
         }
 
@@ -95,6 +98,13 @@ namespace RockPaperScissors
         private void DoTurn()
         {
             int playerChoice = AskPlayerChoice();
+
+            if(playerChoice == -1)
+            {
+                autoturn = false;
+                return;
+            }
+
             int robotChoice = random.Next(0, 3);
             Console.WriteLine($"The player choose {optionNames[playerChoice]} and the robot choose {optionNames[robotChoice]}.");
 
@@ -130,7 +140,7 @@ namespace RockPaperScissors
         {
             while (true)
             {
-                Console.WriteLine("Which do you want to chose: [R]ock, [P]aper, or [S]cissors?");
+                Console.WriteLine("Which do you want to chose: [R]ock, [P]aper, or [S]cissors? ([Q]uit)");
                 ConsoleKeyInfo input = Console.ReadKey();
                 Console.WriteLine();
                 switch (input.Key)
@@ -141,6 +151,8 @@ namespace RockPaperScissors
                         return (int)Options.ROCK;
                     case ConsoleKey.S:
                         return (int)Options.ROCK;
+                    case ConsoleKey.Q:
+                        return -1;
                     default:
                         Console.WriteLine("I\'m sorry but that was not a valid input. Please try again.");
                         break;
@@ -156,7 +168,7 @@ namespace RockPaperScissors
         {
             while (true)
             {
-                Console.WriteLine("Play Again? [Y]es/[N]o");
+                Console.WriteLine("Play Again? [Y]es/[N]o ([A]utoturn)");
                 ConsoleKeyInfo input = Console.ReadKey();
                 Console.WriteLine();
                 switch (input.Key)
@@ -165,6 +177,9 @@ namespace RockPaperScissors
                         return true;
                     case ConsoleKey.N:
                         return false;
+                    case ConsoleKey.A:
+                        autoturn = true;
+                        return true;
                     default:
                         Console.WriteLine("I\'m sorry but that was not a valid input. Please try again.");
                         break;
