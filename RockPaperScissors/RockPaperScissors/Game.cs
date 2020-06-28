@@ -113,7 +113,7 @@ namespace RockPaperScissors
                 PlayerScore++;
             }
             DisplayScore();
-            saveGame();
+            SaveGame();
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace RockPaperScissors
         /// <summary>
         /// Saves the score in a simple XML document.
         /// </summary>
-        private void saveGame()
+        private void SaveGame()
         {
             FileStream fileStream = new FileStream("rps.xml", FileMode.Create);
             XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
